@@ -1,0 +1,9 @@
+module Lib
+    ( someFunc
+    ) where
+
+import Util
+
+someFunc :: IO ()
+ickmport Data.Hex
+someFunc = putStrLn "someFunc"
