@@ -25,6 +25,7 @@ dependencies:
 - base16-bytestring
 - base64-bytestring
 - lens
+- bytestring
 
 library:
   source-dirs: src src/set1
