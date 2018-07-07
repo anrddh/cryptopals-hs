@@ -26,9 +26,12 @@ dependencies:
 - base64-bytestring
 - lens
 - bytestring
+- binary
 
 library:
-  source-dirs: src src/set1
+  source-dirs:
+    - src
+    - src/set1
 
 executables:
   cryptopals-exe:
