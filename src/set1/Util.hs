@@ -1,12 +1,16 @@
-{-# LANGUAGE NoImplicitPrelude, OverloadedStrings, FlexibleInstances #-}
+{-# LANGUAGE OverloadedStrings, FlexibleInstances #-}
 
 module Util where
 
-import Protolude
-
+import Data.ByteString(ByteString)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Base16 as Hex
 import qualified Data.ByteString.Base64 as B64
+import Data.Text(Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import Data.Text.Encoding
+import TextShow
 
 newtype Base16  = B16  { b16 :: ByteString } deriving (Eq, Show)
 newtype Base64  = B64  { b64 :: ByteString } deriving (Eq, Show)
@@ -28,7 +32,7 @@ instance Encodable Base16 where
 instance Encodable Base64 where
   decode bs = case B64.decode $ b64 bs of
                 Right s -> Right $ D s
-                Left e  -> Left $ show e
+                Left e  -> Left $ showt e
   encode = B64 . B64.encode . d
 
 -- Deserializes a string representing Hex and then serializes it to a
@@ -47,28 +51,11 @@ base64ToHex bs = decode bs >>= pure . encode
 class Pretty a where
   pretty :: a -> Text
 
-instance Pretty (Either UnicodeException Text) where
-  pretty (Right s) = s
-  pretty (Left e)  = "Error: " <> show e
- 
 instance Pretty Base16 where
-  pretty = toS . b16
+  pretty = showt . b16
 
 instance Pretty Base64 where
-  pretty = toS . b64
+  pretty = showt . b64
 
-{- XOR -}
-
--- 'xor' for 'ByteString's
-bXor :: ByteString -> ByteString -> ByteString
-bXor x y = B.pack $ B.zipWith xor x y
-
--- 'xor' for 'Decoded'
-dXor :: Decoded -> Decoded -> Decoded
-dXor d1 d2 = D $ bXor (d d1) (d d2)
-
--- 'xor' for 'Encodedable a'
-eXor :: Encodable a => a -> a -> Either Text a
-eXor e1 e2 = do d1 <- decode e1
-                d2 <- decode e2
-                pure $ encode $ d1 `dXor` d2
+readHexFile :: Text -> IO [Base16]
+readHexFile f = ((B16 . encodeUtf8 <$>) . T.lines) <$> TIO.readFile (T.unpack f)

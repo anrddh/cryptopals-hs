@@ -21,12 +21,12 @@ description:         Please see the README on GitHub at <https://github.com/anrd
 
 dependencies:
 - base >= 4.7 && < 5
-- protolude
 - base16-bytestring
 - base64-bytestring
-- lens
 - bytestring
 - binary
+- text
+- text-show
 
 library:
   source-dirs:
