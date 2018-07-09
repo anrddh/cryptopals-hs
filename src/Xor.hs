@@ -5,6 +5,7 @@ module Xor where
 import Data.Bits
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
+import qualified Data.ByteString.Lazy as BL
 import Data.Char
 import Data.Either
 import Data.Foldable
@@ -21,6 +22,10 @@ import Util
 -- 'xor' for 'ByteString's
 bXor :: ByteString -> ByteString -> ByteString
 bXor x y = B.pack $ B.zipWith xor x y
+
+-- 'xor' for 'BL.ByteString's
+lXor :: BL.ByteString -> BL.ByteString -> BL.ByteString
+lXor x y = BL.pack $ BL.zipWith xor x y
 
 -- 'xor' for 'Decoded'
 dXor :: Decoded -> Decoded -> Decoded
