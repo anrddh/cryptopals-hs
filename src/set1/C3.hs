@@ -18,4 +18,4 @@ runS1C3 = do putStr "Enter hex string: "
              ciphertext <- B16 <$> B.getLine
              case singleXorE ciphertext of
                Right s -> putStrLn s
-               Left s  -> putStrLn $ "Error: " `append` s
+               Left  s -> putStrLn $ "Error: " `append` s
