@@ -15,7 +15,6 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Data.Text.Encoding
 import Data.Word
-import Debug.Trace (trace)
 
 import Util
 

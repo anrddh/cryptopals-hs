@@ -30,9 +30,9 @@ instance Encodable Base16 where
   encode = B16 . Hex.encode . d
 
 instance Encodable Base64 where
-  decode bs = case B64.decode $ b64 bs of
-                Right s -> Right $ D s
-                Left e  -> Left $ showt e
+  decode (B64 bs) = case B64.decode bs of
+                      Right s -> Right $ D s
+                      Left  e -> Left $ showt e
   encode = B64 . B64.encode . d
 
 reencode :: (Encodable a, Encodable b) => a -> Either Text b

@@ -15,5 +15,5 @@ import Xor
 runS1C4 :: IO ()
 runS1C4 = do hexs <- readHexFile "c4.txt"
              case detectSingleXor hexs of
-               Left s  -> putStrLn s
+               Left  s -> putStrLn $ "Error: " `append` s
                Right s -> putStrLn s
