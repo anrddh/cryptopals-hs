@@ -35,15 +35,18 @@ instance Encodable Base64 where
                 Left e  -> Left $ showt e
   encode = B64 . B64.encode . d
 
+reencode :: (Encodable a, Encodable b) => a -> Either Text b
+reencode bs = decode bs >>= pure . encode
+
 -- Deserializes a string representing Hex and then serializes it to a
 -- string representing B64.
 hexToBase64 :: Base16 -> Either Text Base64
-hexToBase64 bs = decode bs >>= pure . encode
+hexToBase64 = reencode
 
 -- Deserializes a string representing B64 and then serializes it to a
 -- string representing Hex.
 base64ToHex :: Base64 -> Either Text Base16
-base64ToHex bs = decode bs >>= pure . encode
+base64ToHex = reencode
 
 {- Pretty -}
 
