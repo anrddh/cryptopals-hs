@@ -5,9 +5,13 @@ module Cipher.AES where
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import Crypto.Cipher.AES
+import System.Random
+import Control.Monad.State
 
 import Util
 import Xor
+
+type RandGen a = State StdGen a
 
 data AESMode = ECB | CBC deriving (Eq, Show)
 
@@ -47,10 +51,40 @@ dCBC key iv ct
 isECB :: ByteString -> Bool
 isECB = hasDuplicates . flip breakBtStr 16
 
--- PlainText -> (CipherText, AES EncMode)
-randEnc :: ByteString -> (ByteString, AESMode)
+-- Generates a random ByteString that's n bytes long given a seed
+genBytes :: Int -> Int -> ByteString
+genBytes n = B.pack . take n . randoms . mkStdGen
 
+-- Generates a random key given a seed
+genKey :: Int -> ByteString
+genKey = genBytes 16
 
+-- Given a seed, returns a number between 5 and 10
+getCount :: Int -> Int
+getCount = fst . randomR (4, 11) . mkStdGen
+
+-- Returns two random ByteStrings of length between 5 and 10 given a
+-- seed
+genPlaintexts :: Int -> (ByteString, ByteString)
+genPlaintexts n = (genBytes count n, genBytes count n)
+  where count = getCount n
+
+-- Generates a random bool given a seed
+genBool :: Int -> Bool
+genBool s = case fst $ randomR (0 :: Int, 3) (mkStdGen s) of
+              1 -> True
+              2 -> False
+
+-- Seed -> PlainText -> (CipherText, AES EncMode)
+randEnc :: Int -> ByteString -> (ByteString, AESMode)
+randEnc s pt = case genBool s of
+                 True  -> (eECB key plaintext,    ECB)
+                 False -> (eCBC key iv plaintext, CBC)
+  where key       = genKey s
+        (p1, p2)  = genPlaintexts s
+        plaintext = p1 `B.append` pt `B.append` p2
+        iv        = genBytes 16 s
+  
 -- Length of the input must be a multiple of 16 bytes
 oracle :: ByteString -> AESMode
 oracle bs = if isECB bs
