@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module C2 where
+module S1.C2 where
 
 import Prelude hiding (putStr, putStrLn)
 

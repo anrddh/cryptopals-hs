@@ -5,11 +5,13 @@ module Lib
 import Text.Read
 import System.IO (hFlush, stdout)
 
-import C1
-import C2
-import C3
-import C4
-import C5
+import S1.C1
+import S1.C2
+import S1.C3
+import S1.C4
+import S1.C5
+import S1.C6
+import S1.C7
 
 run :: IO ()
 run = putStr "Enter challenge number: "
@@ -21,4 +23,6 @@ run = putStr "Enter challenge number: "
                      Just 3 -> runS1C3
                      Just 4 -> runS1C4
                      Just 5 -> runS1C5
+                     Just 6 -> runS1C6
+                     Just 7 -> runS1C7
                      _      -> putStrLn "Bad input." *> run

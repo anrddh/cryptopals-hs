@@ -27,11 +27,11 @@ dependencies:
 - binary
 - text
 - text-show
+- cipher-aes
 
 library:
   source-dirs:
     - src
-    - src/set1
 
 executables:
   cryptopals-exe:

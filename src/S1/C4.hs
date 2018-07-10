@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module C4 where
+module S1.C4 where
 
 import Prelude hiding (putStr, putStrLn)
 
@@ -10,10 +10,10 @@ import Data.Text
 import Data.Text.IO
 
 import Util
-import Xor
+import Cipher.SingleXor
 
 runS1C4 :: IO ()
 runS1C4 = do hexs <- readHexFile "c4.txt"
              case detectSingleXor hexs of
                Left  s -> putStrLn $ "Error: " `append` s
-               Right s -> putStrLn s
+               Right s -> putStrLn $ fst s
