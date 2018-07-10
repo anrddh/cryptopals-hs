@@ -28,7 +28,7 @@ run = putStr "Enter challenge number: "
                      Just 5  -> runS1C5
                      Just 6  -> runS1C6
                      Just 7  -> runS1C7
-                     -- Just 8 -> runS1C8
+                     Just 8  -> runS1C8
                      Just 9  -> runS2C9
                      Just 10 -> runS2C10
                      _       -> putStrLn "Bad input." *> run

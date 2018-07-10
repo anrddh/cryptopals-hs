@@ -41,10 +41,6 @@ repeatKeyEnc keyE ptE = decode keyE
 editDist :: Decoded -> Decoded -> Int
 editDist (D h1) (D h2) = sum $ popCount <$> (B.unpack $ h1 `bXor` h2)
 
-breakBtStr :: ByteString -> Int -> [ByteString]
-breakBtStr "" _ = []
-breakBtStr b n  = B.take n b : (breakBtStr (B.drop n b) n)
-
 -- Inp -> BlockSize -> BlockNum -> Out
 getBlock :: Decoded -> Int -> Int -> Decoded
 getBlock (D d') n 0 = D $ B.take n d'

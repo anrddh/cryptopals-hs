@@ -11,6 +11,7 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Data.Text.Encoding
 import TextShow
+import Data.List
 
 newtype Base16  = B16  { b16 :: ByteString } deriving (Eq, Show)
 newtype Base64  = B64  { b64 :: ByteString } deriving (Eq, Show)
@@ -63,7 +64,6 @@ instance Pretty Base64 where
 readHexFile :: Text -> IO [Base16]
 readHexFile f = ((B16 . encodeUtf8 <$>) . T.lines) <$> TIO.readFile (T.unpack f)
 
-
 -- Input -> Pad Size -> Padded
 pad :: ByteString -> Int -> ByteString
 pad d' n
@@ -71,3 +71,10 @@ pad d' n
   | otherwise        = d' `B.append` pad
   where diff = n - B.length d'
         pad  = B.pack $ replicate diff $ fromIntegral diff
+
+breakBtStr :: ByteString -> Int -> [ByteString]
+breakBtStr "" _ = []
+breakBtStr b n  = B.take n b : (breakBtStr (B.drop n b) n)
+
+hasDuplicates :: Eq a => [a] -> Bool
+hasDuplicates ts = length ts /= length (nub ts)

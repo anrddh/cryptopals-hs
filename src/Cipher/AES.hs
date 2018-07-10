@@ -19,7 +19,7 @@ dECB = decryptECB . initAES
 
 -- Only works correctly if len IV = 16 bytes (128 bits)
 -- Key -> IV -> PlainText -> CipherText
-eCBC :: ByteString ->  ByteString -> ByteString -> ByteString
+eCBC :: ByteString -> ByteString -> ByteString -> ByteString
 eCBC _ _ "" = ""
 eCBC key iv pt
   | ivLen <= B.length pt = cipherOut `B.append` nextBlock
@@ -31,7 +31,7 @@ eCBC key iv pt
 
 -- Only works correctly if len IV = 16 bytes (128 bits)
 -- Key -> IV -> CipherText -> PlainText
-dCBC :: ByteString ->  ByteString -> ByteString -> ByteString
+dCBC :: ByteString -> ByteString -> ByteString -> ByteString
 dCBC _ _ "" = ""
 dCBC key iv ct
   | ivLen <= B.length ct = plainOut `B.append` nextBlock
@@ -40,3 +40,7 @@ dCBC key iv ct
         cipherInp = B.take ivLen ct
         plainOut  = (dECB key cipherInp) `bXor` iv
         nextBlock = dCBC key cipherInp (B.drop ivLen ct)
+
+-- Length must be a multiple of 16 bytes
+isECB :: ByteString -> Bool
+isECB = hasDuplicates . flip breakBtStr 16
