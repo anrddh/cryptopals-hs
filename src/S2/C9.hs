@@ -15,11 +15,11 @@ import System.IO (hFlush, stdout)
 import Util
 import Cipher
 
-runS1C8 :: IO ()
-runS1C8 = do pt <- D <$> B.getLine
+runS2C9 :: IO ()
+runS2C9 = do pt <- D <$> B.getLine
              putStr "Enter pad: "
              hFlush stdout
              numM <- readMaybe <$> Prelude.getLine
              case numM of
-               Just n  -> putStrLn $ decodeUtf8 $ d $ pad pt n
+               Just n  -> putStrLn $ decodeUtf8 $ pad (d pt) n
                Nothing -> putStrLn "Need num"

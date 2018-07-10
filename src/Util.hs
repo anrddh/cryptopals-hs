@@ -65,9 +65,9 @@ readHexFile f = ((B16 . encodeUtf8 <$>) . T.lines) <$> TIO.readFile (T.unpack f)
 
 
 -- Input -> Pad Size -> Padded
-pad :: Decoded -> Int -> Decoded
-pad (D d') n
-  | B.length d' >= n = D d'
-  | otherwise        = D $ d' `B.append` pad
+pad :: ByteString -> Int -> ByteString
+pad d' n
+  | B.length d' >= n = d'
+  | otherwise        = d' `B.append` pad
   where diff = n - B.length d'
         pad  = B.pack $ replicate diff $ fromIntegral diff
