@@ -28,6 +28,7 @@ dependencies:
 - text
 - text-show
 - cipher-aes
+- random
 
 library:
   source-dirs:
