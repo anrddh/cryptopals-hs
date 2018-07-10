@@ -9,6 +9,8 @@ import Crypto.Cipher.AES
 import Util
 import Xor
 
+data AESMode = ECB | CBC deriving (Eq, Show)
+
 -- Key -> PlainText -> CipherText
 eECB :: ByteString -> ByteString -> ByteString
 eECB = encryptECB . initAES
@@ -41,6 +43,16 @@ dCBC key iv ct
         plainOut  = (dECB key cipherInp) `bXor` iv
         nextBlock = dCBC key cipherInp (B.drop ivLen ct)
 
--- Length must be a multiple of 16 bytes
+-- Length of the input must be a multiple of 16 bytes
 isECB :: ByteString -> Bool
 isECB = hasDuplicates . flip breakBtStr 16
+
+-- PlainText -> (CipherText, AES EncMode)
+randEnc :: ByteString -> (ByteString, AESMode)
+
+
+-- Length of the input must be a multiple of 16 bytes
+oracle :: ByteString -> AESMode
+oracle bs = if isECB bs
+            then ECB
+            else CBC
