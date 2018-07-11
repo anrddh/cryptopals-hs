@@ -12,6 +12,14 @@ import qualified Data.Text.IO as TIO
 import Data.Text.Encoding
 import TextShow
 import Data.List
+import Data.Word
+import Data.Void
+import Text.Megaparsec
+import Text.Megaparsec.Char
+import qualified Text.Megaparsec.Char.Lexer as L
+import Data.Map(Map)
+import qualified Data.Map as Map
+import Control.Applicative hiding (some)
 
 newtype Base16  = B16  { b16 :: ByteString } deriving (Eq, Show)
 newtype Base64  = B64  { b64 :: ByteString } deriving (Eq, Show)
@@ -85,3 +93,21 @@ breakBtStr b n  = B.take n b : (breakBtStr (B.drop n b) n)
 
 hasDuplicates :: Eq a => [a] -> Bool
 hasDuplicates ts = length ts /= length (nub ts)
+
+charRepl :: Int -> Word8 -> ByteString
+charRepl s = B.pack . replicate s
+
+dRepl :: Int -> Word8 -> Decoded
+dRepl x y = D $ charRepl x y
+
+{- Parsing Stuff -}
+
+type Parser = Parsec Void Text
+type Query = Map Text Text
+
+query1 :: Parser (Text, Text)
+query1 = liftA2 (,) (T.pack <$> (some $ notChar '='))
+                    (T.pack <$> (some $ notChar '&'))
+
+query :: Parser Query
+query = Map.fromList <$> (query1 `sepBy` (L.symbol (pure ()) "&"))

@@ -18,4 +18,4 @@ runS2C11 :: IO ()
 runS2C11 = do putStr "Input: "
               hFlush stdout
               inp <- B.getLine
-              first oracle <$> randEnc inp >>= print
+              first aesMode <$> oracle inp >>= print

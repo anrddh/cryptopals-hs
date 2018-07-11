@@ -31,6 +31,7 @@ dependencies:
 - random
 - megaparsec
 - containers
+- safe
 
 library:
   source-dirs:

@@ -21,12 +21,6 @@ import Data.Word
 import Util
 import Xor
 
-charRepl :: Int -> Word8 -> ByteString
-charRepl s = B.pack . replicate s
-
-dRepl :: Int -> Word8 -> Decoded
-dRepl x y = D $ charRepl x y
-
 -- Computes the "score" of the input string and returns the string
 -- along with the score.
 scoreStr :: String -> (Text, Int)
