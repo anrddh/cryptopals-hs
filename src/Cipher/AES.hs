@@ -6,18 +6,16 @@ import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import Crypto.Cipher.AES
 import System.Random
-import Control.Monad.State
+import Control.Monad
 
 import Util
 import Xor
-
-type RandGen a = State StdGen a
 
 data AESMode = ECB | CBC deriving (Eq, Show)
 
 -- Key -> PlainText -> CipherText
 eECB :: ByteString -> ByteString -> ByteString
-eECB = encryptECB . initAES
+eECB key inp = encryptECB (initAES key) (pad' inp 16)
 
 -- Key -> CipherText -> PlainText
 dECB :: ByteString -> ByteString -> ByteString
@@ -47,45 +45,50 @@ dCBC key iv ct
         plainOut  = (dECB key cipherInp) `bXor` iv
         nextBlock = dCBC key cipherInp (B.drop ivLen ct)
 
--- Length of the input must be a multiple of 16 bytes
-isECB :: ByteString -> Bool
-isECB = hasDuplicates . flip breakBtStr 16
+-- Generates a random ByteString that's n bytes long
+genBytes :: Int -> IO ByteString
+genBytes n = replicateM n randomIO
+             >>= pure . B.pack
 
--- Generates a random ByteString that's n bytes long given a seed
-genBytes :: Int -> Int -> ByteString
-genBytes n = B.pack . take n . randoms . mkStdGen
-
--- Generates a random key given a seed
-genKey :: Int -> ByteString
+-- Generates a random key
+genKey :: IO ByteString
 genKey = genBytes 16
 
--- Given a seed, returns a number between 5 and 10
-getCount :: Int -> Int
-getCount = fst . randomR (4, 11) . mkStdGen
+-- Returns a number between 5 and 10
+getCount :: IO Int
+getCount = randomRIO (4, 11)
 
--- Returns two random ByteStrings of length between 5 and 10 given a
--- seed
-genPlaintexts :: Int -> (ByteString, ByteString)
-genPlaintexts n = (genBytes count n, genBytes count n)
-  where count = getCount n
+-- Returns two random ByteStrings of length between 5 and 10
+genPlaintexts :: IO (ByteString, ByteString)
+genPlaintexts = do x  <- getCount
+                   y  <- getCount
+                   x' <- genBytes x
+                   y' <- genBytes y
+                   pure (x', y')
 
 -- Generates a random bool given a seed
-genBool :: Int -> Bool
-genBool s = case fst $ randomR (0 :: Int, 3) (mkStdGen s) of
-              1 -> True
-              2 -> False
+genBool :: IO Bool
+genBool = do gen <- getStdGen
+             let (num, gen') = randomR (0 :: Int, 1) gen
+             setStdGen gen'
+             pure $ case num of
+                      0 -> True
+                      1 -> False
 
--- Seed -> PlainText -> (CipherText, AES EncMode)
-randEnc :: Int -> ByteString -> (ByteString, AESMode)
-randEnc s pt = case genBool s of
-                 True  -> (eECB key plaintext,    ECB)
-                 False -> (eCBC key iv plaintext, CBC)
-  where key       = genKey s
-        (p1, p2)  = genPlaintexts s
-        plaintext = p1 `B.append` pt `B.append` p2
-        iv        = genBytes 16 s
-  
--- Length of the input must be a multiple of 16 bytes
+-- PlainText -> (CipherText, AES EncMode)
+randEnc :: ByteString -> IO (ByteString, AESMode)
+randEnc pt = do b <- genBool
+                key <- genKey
+                (p1, p2) <- genPlaintexts
+                iv <- genBytes 16
+                let plaintext = p1 `B.append` pt `B.append` p2
+                pure $ case b of
+                  True  -> (eECB key plaintext,    ECB)
+                  False -> (eCBC key iv plaintext, CBC)
+
+isECB :: ByteString -> Bool
+isECB bs = hasDuplicates $ breakBtStr bs 16
+
 oracle :: ByteString -> AESMode
 oracle bs = if isECB bs
             then ECB

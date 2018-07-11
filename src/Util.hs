@@ -72,6 +72,13 @@ pad d' n
   where diff = n - B.length d'
         pad  = B.pack $ replicate diff $ fromIntegral diff
 
+-- Input -> MultipleOf -> Padded
+pad' :: ByteString -> Int -> ByteString
+pad' bs m = if bsLen `mod` m == 0
+            then bs
+            else pad bs $ bsLen + (m - bsLen `mod` m)
+  where bsLen = B.length bs
+
 breakBtStr :: ByteString -> Int -> [ByteString]
 breakBtStr "" _ = []
 breakBtStr b n  = B.take n b : (breakBtStr (B.drop n b) n)
