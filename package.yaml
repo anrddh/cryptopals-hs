@@ -30,6 +30,7 @@ dependencies:
 - cipher-aes
 - random
 - megaparsec
+- containers
 
 library:
   source-dirs:
