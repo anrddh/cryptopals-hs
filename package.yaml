@@ -29,6 +29,7 @@ dependencies:
 - text-show
 - cipher-aes
 - random
+- megaparsec
 
 library:
   source-dirs:
