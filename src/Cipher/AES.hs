@@ -11,6 +11,9 @@ import Data.Word
 import Data.Text.Encoding
 import Debug.Trace
 import Safe
+import Data.Text (Text)
+import Text.Megaparsec
+import qualified Data.Map as Map
 
 import Util
 import Xor
@@ -103,16 +106,16 @@ oracle' pt = eECB "YELLOW SUBMARINE" (pt `B.append` (d $ right $ decode $ B64 "U
 aesBlockSize :: Int
 aesBlockSize = 16
 
-getBlocks :: Int -> ByteString -> ByteString
-getBlocks =  B.take . (* aesBlockSize)
+getBlks :: Int -> ByteString -> ByteString
+getBlks =  B.take . (* aesBlockSize)
 
 -- Curr -> Inp -> Byte
 bruteForceByte :: Int -> ByteString -> ByteString -> Maybe Word8
 bruteForceByte b c i =
   headMay $
-  filter
-  ((getBlocks b (oracle' i) ==) . getBlocks b . oracle' . B.snoc (i `B.append` c))
-  [0..255]
+    filter
+      ((getBlks b (oracle' i) ==) . getBlks b . oracle' . B.snoc (i `B.append` c))
+      [0..255]
 
 -- Current -> Rest
 break'C12 :: ByteString -> ByteString
@@ -123,7 +126,7 @@ break'C12 curr = case (bruteForceByte currBlock curr inp) of
         currLen   = B.length curr
         remLen    = outLen - currLen
         inpLen    = currBlock * aesBlockSize - currLen - 1
-        inp       = charRepl inpLen 65 -- 65 == 'A' (this is an arbitrary choice)
+        inp       = charRepl inpLen 65 -- 65 ~ 'A' (this is an arbitrary choice)
         currBlock = currLen `div` aesBlockSize + 1
   
 isECB :: CipherText -> Bool
@@ -133,3 +136,19 @@ aesMode :: CipherText -> AESMode
 aesMode bs = if isECB bs
              then ECB
              else CBC
+
+c13Key :: ByteString
+c13Key = "YELLOW SUBMARINE"
+
+oracle'' :: Text -> CipherText
+oracle'' = eECB c13Key . encodeUtf8 . encodeQuery . profileFor
+
+decryptor :: CipherText -> Text
+decryptor = decodeUtf8 . dECB c13Key
+
+-- decryptor consC13 = "email=AAAAAAAAAAAAA&uid=10&role=admin\v\v\v\v\v\v\v\v\v\v\v"
+consC13 :: CipherText
+consC13 = prefix `B.append` postfix
+  where email1  = "AAAAAAAAAAAAA" -- email len must be 13
+        prefix  = B.take 32 $ oracle'' email1
+        postfix = B.take 16 $ B.drop 16 $ oracle'' $ decodeUtf8 $ "AAAAAAAAAA" `B.append` (pad' "admin" 16) -- The As in this construction are completely garbage

@@ -20,6 +20,7 @@ import qualified Text.Megaparsec.Char.Lexer as L
 import Data.Map(Map)
 import qualified Data.Map as Map
 import Control.Applicative hiding (some)
+import Control.Monad
 
 newtype Base16  = B16  { b16 :: ByteString } deriving (Eq, Show)
 newtype Base64  = B64  { b64 :: ByteString } deriving (Eq, Show)
@@ -103,11 +104,21 @@ dRepl x y = D $ charRepl x y
 {- Parsing Stuff -}
 
 type Parser = Parsec Void Text
-type Query = Map Text Text
 
 query1 :: Parser (Text, Text)
 query1 = liftA2 (,) (T.pack <$> (some $ notChar '='))
                     (T.pack <$> (some $ notChar '&'))
 
-query :: Parser Query
-query = Map.fromList <$> (query1 `sepBy` (L.symbol (pure ()) "&"))
+query :: Parser [(Text, Text)]
+query = query1 `sepBy` (L.symbol (pure ()) "&")
+
+encodeQuery :: [(Text, Text)] -> Text
+encodeQuery = foldr (\(key,val) acc -> T.concat [key, "=", val, "&", acc]) ""
+
+stripBadChars :: Text -> Text
+stripBadChars = T.filter $ liftA2 (&&) ('=' /=) ('&' /=)
+
+profileFor :: Text -> [(Text, Text)]
+profileFor em = [("email", stripBadChars em),
+                 ("uid", "10"),
+                 ("role", "user")]
