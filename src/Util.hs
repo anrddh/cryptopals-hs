@@ -88,6 +88,14 @@ pad' bs m = if bsLen `mod` m == 0
             else pad bs $ bsLen + (m - bsLen `mod` m)
   where bsLen = B.length bs
 
+-- Strips (valid) PKCS#7 padding
+stripPad :: ByteString -> Maybe ByteString
+stripPad "" = Nothing
+stripPad b  = case (charRepl (fromIntegral lB) lB) `B.isSuffixOf` b of
+                True  -> Just $ B.take (B.length b - (fromIntegral lB)) $ b
+                False -> Nothing
+  where lB = B.last b
+
 breakBtStr :: ByteString -> Int -> [ByteString]
 breakBtStr "" _ = []
 breakBtStr b n  = B.take n b : (breakBtStr (B.drop n b) n)
@@ -122,3 +130,20 @@ profileFor :: Text -> [(Text, Text)]
 profileFor em = [("email", stripBadChars em),
                  ("uid", "10"),
                  ("role", "user")]
+
+prefixLen :: ByteString -> ByteString -> Int
+prefixLen = prefixLen' 0
+
+prefixLen' :: Int -> ByteString -> ByteString -> Int
+prefixLen' n "" _  = n
+prefixLen' n _ ""  = n
+prefixLen' n xs ys = if B.head xs == B.head ys
+                     then prefixLen' (n + 1) (B.tail xs) (B.tail ys)
+                     else n
+
+-- Round-up division
+div' :: (Integral a, Integral b, Integral c) => a -> b -> c
+div' x y = if x `mod` y' == 0
+           then fromIntegral $ x `div` y'
+           else fromIntegral $ x `div` y' + 1
+  where y' = fromIntegral y

@@ -17,6 +17,8 @@ import S2.C9
 import S2.C10
 import S2.C11
 import S2.C12
+import S2.C13
+import S2.C14
 
 run :: IO ()
 run = putStr "Enter challenge number: "
@@ -35,4 +37,6 @@ run = putStr "Enter challenge number: "
                      Just 10 -> runS2C10
                      Just 11 -> runS2C11
                      Just 12 -> runS2C12
+                     Just 13 -> runS2C13
+                     Just 14 -> runS2C14
                      _       -> putStrLn "Bad input." *> run
