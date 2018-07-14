@@ -84,7 +84,7 @@ pad d' n
 -- Input -> MultipleOf -> Padded
 pad' :: ByteString -> Int -> ByteString
 pad' bs m = if bsLen `mod` m == 0
-            then bs
+            then pad bs $ bsLen + m
             else pad bs $ bsLen + (m - bsLen `mod` m)
   where bsLen = B.length bs
 

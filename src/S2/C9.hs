@@ -13,7 +13,6 @@ import Data.Text.Encoding
 import System.IO (hFlush, stdout)
 
 import Util
-import Cipher
 
 runS2C9 :: IO ()
 runS2C9 = do pt <- D <$> B.getLine

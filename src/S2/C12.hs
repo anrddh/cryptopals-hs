@@ -37,9 +37,7 @@ break'C12 :: ByteString -> ByteString
 break'C12 curr = case (bruteForceByte currBlock curr inp) of
                    Just b  -> break'C12 $ curr `B.snoc` b
                    Nothing -> curr
-  where outLen    = B.length $ oracle ""
-        currLen   = B.length curr
-        remLen    = outLen - currLen
+  where currLen   = B.length curr
         inpLen    = currBlock * 16 - currLen - 1
         inp       = charRepl inpLen 65 -- 65 ~ 'A' (this is an arbitrary choice)
         currBlock = currLen `div` 16 + 1

@@ -10,7 +10,7 @@ import Data.Text.IO
 import Data.Text.Encoding
 
 import Util
-import Cipher
+import Cipher.RepeatKey
 
 runS1C6 :: IO ()
 runS1C6 = do file <- B64 <$> (B.readFile "c6.txt")

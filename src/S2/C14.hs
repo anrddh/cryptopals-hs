@@ -57,7 +57,6 @@ lengthPrefix o = ((numBlocks - 1) * 16) + lastBlock
 
 -- Given an oracle, the current block number (which represents the
 -- current block of
-
 -- Oracle -> CurrBlock -> Input -> Byte
 bruteForceByte :: Oracle -> Int -> ByteString -> ByteString -> Maybe Word8
 bruteForceByte o b c i = headMay $
@@ -71,7 +70,6 @@ postfix = flip postfix' ""
 
 -- This is mostly a wrapper around bruteForceByte, which does all the
 -- work.
-
 -- Oracle -> Current -> Rest
 postfix' :: Oracle -> ByteString -> ByteString
 postfix' o c = case bruteForceByte o numBlocks c inp of

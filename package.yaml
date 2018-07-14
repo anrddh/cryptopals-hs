@@ -32,6 +32,7 @@ dependencies:
 - megaparsec
 - containers
 - safe
+- lens
 
 library:
   source-dirs:
