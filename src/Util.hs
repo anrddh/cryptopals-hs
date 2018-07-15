@@ -2,11 +2,11 @@
 
 module Util where
 
-import Data.ByteString(ByteString)
+import Data.ByteString (ByteString)
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Base16 as Hex
 import qualified Data.ByteString.Base64 as B64
-import Data.Text(Text)
+import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Data.Text.Encoding

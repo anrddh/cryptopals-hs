@@ -3,7 +3,8 @@
 module Cipher.RepeatKey
   (repeatkey,
    repeatKeyEnc,
-   breakRepeatKey)
+   breakRepeatKey,
+   breakRepeatKey')
 where
 
 import Data.Either
@@ -53,11 +54,19 @@ avDists :: Fractional b => [Decoded] -> b
 avDists d' = av $ uncurry editDist <$> [(x,y) | x <- d', y <- d']
 
 breakRepeatKey :: Decoded -> (Text, Text)
-breakRepeatKey d''@(D d') = (decodeUtf8 $ d $ repeatkey key d'', decodeUtf8 $ d key)
+breakRepeatKey d''@(D d') = breakRepeatKey' keysize d''
   where f i     = ((avDists [getBlock d'' i 0,
                              getBlock d'' i 1,
                              getBlock d'' i 2,
                              getBlock d'' i 3]) / (fromIntegral i), i)
         keysize = snd $ minimumBy (comparing fst) $ f <$> [2..40]
+
+-- Same as the above, but expects a keysize
+breakRepeatKey' :: Int -> Decoded -> (Text, Text)
+breakRepeatKey' keysize d''@(D d') = (decodeUtf8 $ d $ repeatkey key d'', decodeUtf8 $ d key)
+  where f i     = ((avDists [getBlock d'' i 0,
+                             getBlock d'' i 1,
+                             getBlock d'' i 2,
+                             getBlock d'' i 3]) / (fromIntegral i), i)
         key     = D $ B.pack $ fromIntegral . snd <$> blocks
         blocks  = (fromJust . singleXorD . D . B.pack <$> (transpose $ B.unpack <$> (breakBtStr d' keysize)))
