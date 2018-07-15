@@ -11,6 +11,8 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Data.Text.Encoding
 import TextShow
+import Data.Maybe
+import Control.Lens
 import Data.List
 import Data.Word
 import Data.Void
@@ -147,3 +149,6 @@ div' x y = if x `mod` y' == 0
            then fromIntegral $ x `div` y'
            else fromIntegral $ x `div` y' + 1
   where y' = fromIntegral y
+
+setAt :: ByteString -> Int -> Word8 -> ByteString
+setAt b pos w = b & ix pos .~ w
