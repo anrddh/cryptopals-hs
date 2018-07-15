@@ -7,12 +7,13 @@ https://en.wikipedia.org/wiki/Mersenne_Twister for details.
 
 module Cipher.RNG where
 
+import Data.Bifunctor
 import Data.Bits
--- import Data.Vector.Unboxed (Vector)
--- import qualified Data.Vector.Unboxed as V
 import Data.ByteString (ByteString)
 import Control.Lens
 import Data.Maybe
+import Control.Monad
+import qualified Control.Monad.State.Lazy as C
 import Data.Word
 
 import Util hiding (d)
@@ -25,44 +26,44 @@ lowerMask = shiftL 1 31 - 1
 upperMask :: Word32
 upperMask = shiftL 1 31
 
-n :: Integral a => a
-n = 624
+rngN :: Integral a => a
+rngN = 624
 
-m :: Integral a => a
-m = 397
+rngM :: Integral a => a
+rngM = 397
 
-r :: Integral a => a
-r = 31
+rngR :: Integral a => a
+rngR = 31
 
-a :: Integral a => a
-a = 0x9908B0DF
+rngA :: Integral a => a
+rngA = 0x9908b0df
 
-u :: Integral a => a
-u = 11
+rngU :: Integral a => a
+rngU = 11
 
-d :: Integral a => a
-d = 0xFFFFFFFF
+rngD :: Integral a => a
+rngD = 0xFFFFFFFF
 
-s :: Integral a => a
-s = 7
+rngS :: Integral a => a
+rngS = 7
 
-b :: Integral a => a
-b = 0x9d2c5680
+rngB :: Integral a => a
+rngB = 0x9d2c5680
 
-t :: Integral a => a
-t = 15
+rngT :: Integral a => a
+rngT = 15
 
-c :: Integral a => a
-c = 0xefc60000
+rngC :: Integral a => a
+rngC = 0xefc60000
 
-l :: Integral a => a
-l = 18
+rngL :: Integral a => a
+rngL = 18
 
-f :: Integral a => a
-f = 1812433253
+rngF :: Integral a => a
+rngF = 1812433253
 
-w :: Integral a => a
-w = 32
+rngW :: Integral a => a
+rngW = 32
 
 {- -}
 
@@ -77,34 +78,39 @@ getStateVal t i = (t ^. state) !! i
 
 -- Given a seed, inits the RNG
 initRNG :: Word32 -> Twister
-initRNG s = initRNG' 1 $ T (replicate n 0 & ix 0 .~ s) n
+initRNG s = initRNG' 1 $ T (replicate rngN 0 & ix 0 .~ s) rngN
 
 initRNG' :: Int -> Twister -> Twister
-initRNG' i t@(T s i') | i == n = t
+initRNG' i t@(T s i') | i == rngN = t
                       | otherwise = initRNG' (i + 1) $ T (s & ix i .~ val) i'
-  where val  = f * val' + (fromIntegral i)
-        val' = (s !! (i - 1)) `xor` (shiftR (s !! (i - 1)) (w - 2))
+  where val  = rngF * val' + (fromIntegral i)
+        val' = (s !! (i - 1)) `xor` (shiftR (s !! (i - 1)) (rngW - 2))
 
 -- update state
 twist :: Twister -> Twister
 twist = twist' 0
 
 twist' :: Int -> Twister -> Twister
-twist' i t | i == n = t & idx .~ 0
+twist' i t | i == rngN = t & idx .~ 0
            | otherwise = twist' (i + 1) (t & state %~ (& ix i .~ val))
   where temp  = (getStateVal t i .&. upperMask) +
-                (getStateVal t (i + 1 `mod` n) .&. lowerMask)
+                (getStateVal t (i + 1 `mod` rngN) .&. lowerMask)
         tempA = if temp `mod` 2 /= 0
-                then (shiftR temp 1) `xor` a
+                then (shiftR temp 1) `xor` rngA
                 else shiftR temp 1
-        val   = tempA `xor` (getStateVal t ((i + m) `mod` n))
+        val   = tempA `xor` (getStateVal t ((i + rngM) `mod` rngN))
 
 -- get 32 bits of randomness from the twister and new twister
 getRand :: Twister -> (Word32, Twister)
-getRand t'@(T s' i) | i >= n = getRand $ twist t'
+getRand t'@(T s' i) | i >= rngN = getRand $ twist t'
                     | otherwise = (y'''', t' & idx %~ (+1))
-  where y = s' !! i
-        y' = y `xor` ((shiftR y u) .&. d)
-        y'' = y' `xor` ((shiftL y' s) .&. b)
-        y''' = y'' `xor` ((shiftL y'' t) .&. c)
-        y'''' = y''' `xor` (shiftR y''' l)
+  where y     = s' !! i
+        y'    = y `xor` ((y `shiftR` rngU) .&. rngD)
+        y''   = y' `xor` ((y' `shiftL` rngS) .&. rngB)
+        y'''  = y'' `xor` ((y'' `shiftL` rngT) .&. rngC)
+        y'''' = y''' `xor` (y''' `shiftR` rngL)
+
+getN :: Int -> Twister -> ([Word32], Twister)
+getN 0 t = ([], t)
+getN n t = first (r:) (getN (n - 1) t')
+  where (r, t') = getRand t
