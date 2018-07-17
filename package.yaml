@@ -24,6 +24,7 @@ dependencies:
 - base16-bytestring
 - base64-bytestring
 - bytestring
+- bytestring-conversion
 - binary
 - text
 - text-show

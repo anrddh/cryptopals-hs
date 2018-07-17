@@ -10,6 +10,8 @@ module Cipher.RNG where
 import Data.Bifunctor
 import Data.Bits
 import Data.ByteString (ByteString)
+import qualified Data.ByteString as B
+import Data.ByteString.Conversion
 import Control.Lens
 import Data.Maybe
 import Control.Monad
@@ -17,6 +19,7 @@ import qualified Control.Monad.State.Lazy as C
 import Data.Word
 
 import Util hiding (d)
+import Xor
 
 {- Magic Numbers -}
 
@@ -100,7 +103,8 @@ twist' i t | i == rngN = t & idx .~ 0
                 else shiftR temp 1
         val   = tempA `xor` (getStateVal t ((i + rngM) `mod` rngN))
 
--- get 32 bits of randomness from the twister and new twister
+-- Return 32 bits of randomness from the twister and the updated
+-- twister
 getRand :: Twister -> (Word32, Twister)
 getRand t'@(T s' i) | i >= rngN = getRand $ twist t'
                     | otherwise = (y'''', t' & idx %~ (+1))
@@ -114,3 +118,14 @@ getN :: Int -> Twister -> ([Word32], Twister)
 getN 0 t = ([], t)
 getN n t = first (r:) (getN (n - 1) t')
   where (r, t') = getRand t
+
+-- Seed -> PlainText -> CipherText
+cMT19937 :: Word32 -> PlainText -> CipherText
+cMT19937 s = cMT19937' (initRNG s)
+
+streamToKey :: [Word32] -> ByteString
+streamToKey = B.concat . (toByteString' <$>)
+
+cMT19937' :: Twister -> ByteString -> ByteString
+cMT19937' t p = p `bXor` key
+  where key = streamToKey $ fst $ getN (B.length p `div'` 4) t
