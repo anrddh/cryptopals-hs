@@ -25,9 +25,7 @@ encrypt pt = do key    <- genKey
 -- keystream.
 -- _Very slow_, but works.
 breakSeed :: PlainText -> CipherText -> Word16
-breakSeed pt ct = fromIntegral $
-                  head $
-                  map fst $
+breakSeed pt ct = fromIntegral $ head $ map fst $
                   filter (\(_, b) -> b == relCt) cts
   where prefixLen = B.length ct - B.length pt
         newPt     = charRepl prefixLen 5 `B.append` pt
