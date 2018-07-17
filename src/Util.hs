@@ -28,6 +28,13 @@ newtype Base16  = B16  { b16 :: ByteString } deriving (Eq, Show)
 newtype Base64  = B64  { b64 :: ByteString } deriving (Eq, Show)
 newtype Decoded = D { d :: ByteString } deriving (Eq, Show)
 
+type Key = ByteString
+type PlainText = ByteString
+type CipherText = ByteString
+type IV = ByteString
+type Nonce = Word64
+type Counter = Word64
+
 -- encode . decode = id = decode . encode
 class Encodable a where
   decode :: a -> Either Text Decoded

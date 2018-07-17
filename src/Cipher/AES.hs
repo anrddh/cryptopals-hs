@@ -22,13 +22,6 @@ import Cipher.Rand
 import Util
 import Xor
 
-type Key = ByteString
-type PlainText = ByteString
-type CipherText = ByteString
-type IV = ByteString
-type Nonce = Word64
-type Counter = Word64
-
 data AESMode = ECB | CBC deriving (Eq, Show)
 
 -- PlainText must be padded
