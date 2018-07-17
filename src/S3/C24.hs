@@ -1,9 +1,9 @@
 module S3.C24 where
 
 import qualified Data.ByteString as B
+import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Random
 import Data.Word
-import Debug.Trace (trace)
 
 import Cipher.Rand
 import Cipher.RNG
@@ -32,9 +32,19 @@ breakSeed pt ct = fromIntegral $ head $ map fst $
         seeds     = [0..0xffff]
         relCt     = B.drop prefixLen ct
         cts       = ((,) <*> (B.drop prefixLen . flip cMT19937 newPt)) <$> seeds
-  
+
+genToken :: Word32 -> Word32
+genToken = last . fst . getN 5 . initRNG
+
+tokenSeedTime :: IO Word32
+tokenSeedTime = round <$> getPOSIXTime >>= pure . genToken
+
+isGenByTime :: Word32 -> IO Bool
+isGenByTime tok = do time <- round <$> getPOSIXTime
+                     pure $ tok `elem` (genToken <$> [(time - 300)..time])
+
 runS3C24 :: IO ()
 runS3C24 = do let pt = charRepl 14 65
               ct <- encrypt pt
-              let crackedSeed = breakSeed pt ct
-              putStrLn $ "Cracked seed: " ++ show crackedSeed
+              putStrLn $ "Cracked seed: " ++ show (breakSeed pt ct)
+              putStrLn . show =<< isGenByTime =<< tokenSeedTime
