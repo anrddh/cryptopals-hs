@@ -11,7 +11,7 @@ import Data.Text.IO
 import Data.Text.Encoding
 
 import Util
-import Cipher.AES
+import Crypto.AES
 
 runS1C8 :: IO ()
 runS1C8 = do file <- readHexFile "c8.txt"

@@ -4,7 +4,7 @@ import Data.Bits
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import Data.Word
 
-import Cipher.RNG
+import Crypto.RNG
 
 untemper4 :: Word32 -> Word32
 untemper4 x = f18 + (shiftR f18 18 `xor` (x .&. 0x3fff))

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Cipher.SingleXor
+module Crypto.SingleXor
   (singleXorD,
    singleXorE,
    detectSingleXor)

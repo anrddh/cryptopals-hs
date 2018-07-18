@@ -13,7 +13,7 @@ import System.IO (hFlush, stdout)
 import Data.Word
 import Safe
 
-import Cipher.AES
+import Crypto.AES
 import Util
 
 -- PlainText -> CipherText

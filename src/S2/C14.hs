@@ -7,8 +7,8 @@ import qualified Data.ByteString as B
 import Safe
 import Data.Word
 
-import Cipher.AES
-import Cipher.Rand
+import Crypto.AES
+import Crypto.Rand
 import Util
 
 type Oracle = PlainText -> CipherText

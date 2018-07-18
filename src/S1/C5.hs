@@ -11,7 +11,7 @@ import Data.Text.IO
 import Data.Text.Encoding
 
 import Util
-import Cipher.RepeatKey
+import Crypto.RepeatKey
 
 runS1C5 :: IO ()
 runS1C5 = do file <- D <$> (B.readFile "c5.txt")

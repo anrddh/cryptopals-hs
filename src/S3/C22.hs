@@ -5,7 +5,7 @@ import Data.Time.Clock.POSIX (getPOSIXTime)
 import Control.Concurrent
 import Data.Word
 
-import Cipher.RNG
+import Crypto.RNG
 
 -- seconds
 minTime :: Integral a => a

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Cipher.AES where
+module Crypto.AES where
 
 import Prelude hiding (succ)
 
@@ -18,7 +18,7 @@ import Text.Megaparsec
 import qualified Data.Map as Map
 import Data.Word
 
-import Cipher.Rand
+import Crypto.Rand
 import Util
 import Xor
 

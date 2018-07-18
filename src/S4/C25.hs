@@ -9,11 +9,10 @@ import qualified Data.ByteString as B
 import Control.Lens
 import Data.Word
 import Data.Text.Encoding
-import Debug.Trace
 import Data.Maybe
 
-import Cipher.AES
-import Cipher.Rand
+import Crypto.AES
+import Crypto.Rand
 import Util
 import Xor
 

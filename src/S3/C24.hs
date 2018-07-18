@@ -5,8 +5,8 @@ import Data.Time.Clock.POSIX (getPOSIXTime)
 import System.Random
 import Data.Word
 
-import Cipher.Rand
-import Cipher.RNG
+import Crypto.Rand
+import Crypto.RNG
 import Util
 
 encrypt :: PlainText -> IO CipherText

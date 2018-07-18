@@ -9,8 +9,8 @@ import Control.Lens
 import System.Random
 import Data.Word
 
-import Cipher.AES
-import Cipher.Rand
+import Crypto.AES
+import Crypto.Rand
 import Util
 
 plaintexts :: [ByteString]

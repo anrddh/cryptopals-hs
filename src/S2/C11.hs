@@ -11,8 +11,8 @@ import Text.Read
 import Data.Text.Encoding
 import System.IO (hFlush, stdout)
 
-import Cipher.AES
-import Cipher.Rand
+import Crypto.AES
+import Crypto.Rand
 import Util
 
 -- PlainText -> (CipherText, AES EncMode)

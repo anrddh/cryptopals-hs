@@ -9,8 +9,8 @@ import Control.Lens
 import Data.Maybe
 import Data.Word
 
-import Cipher.AES
-import Cipher.Rand
+import Crypto.AES
+import Crypto.Rand
 import Util
 
 prefix :: ByteString

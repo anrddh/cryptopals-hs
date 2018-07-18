@@ -5,7 +5,7 @@ module S3.C18 where
 import Data.ByteString (ByteString)
 import Data.Text.Encoding
 
-import Cipher.AES
+import Crypto.AES
 import Util
 
 ct :: ByteString

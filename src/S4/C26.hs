@@ -8,10 +8,9 @@ import qualified Data.ByteString as B
 import Control.Lens
 import Data.Maybe
 import Data.Word
-import Debug.Trace
 
-import Cipher.AES
-import Cipher.Rand
+import Crypto.AES
+import Crypto.Rand
 import Util
 
 prefix :: ByteString

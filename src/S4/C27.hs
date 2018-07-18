@@ -4,11 +4,10 @@ module S4.C27 where
 
 import qualified Data.ByteString as B
 import Data.Maybe
-import Debug.Trace
-
 import Control.Monad
-import Cipher.AES
-import Cipher.Rand
+  
+import Crypto.AES
+import Crypto.Rand
 import Util
 import Xor
 

@@ -12,7 +12,7 @@ import Data.Text.IO
 import Data.Text.Encoding
 
 import Util
-import Cipher.AES
+import Crypto.AES
 
 runS1C7 :: IO ()
 runS1C7 = do file <- B64 <$> (B.readFile "c7.txt")

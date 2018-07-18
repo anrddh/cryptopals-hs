@@ -9,7 +9,7 @@ import Data.Text.IO
 import Data.Text.Encoding
 import System.IO (hFlush, stdout)
 
-import Cipher.AES
+import Crypto.AES
 import Util
 
 runS2C10 :: IO ()

@@ -10,7 +10,7 @@ import Data.Text
 import Data.Text.IO
 
 import Util
-import Cipher.SingleXor
+import Crypto.SingleXor
 
 runS1C4 :: IO ()
 runS1C4 = do hexs <- readHexFile "c4.txt"

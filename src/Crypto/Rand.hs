@@ -1,4 +1,4 @@
-module Cipher.Rand where
+module Crypto.Rand where
 
 import Data.ByteString (ByteString)
 import qualified Data.ByteString as B

@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Cipher.RepeatKey
+module Crypto.RepeatKey
   (repeatkey,
    repeatKeyEnc,
    breakRepeatKey,
@@ -21,7 +21,7 @@ import Data.Ord
 import Data.Foldable
 import Debug.Trace(trace)
 
-import Cipher.SingleXor
+import Crypto.SingleXor
 import Util
 import Xor
 

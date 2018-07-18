@@ -9,8 +9,8 @@ import Data.Text.Encoding
 import Data.Foldable
 import qualified Data.Text.IO as TIO
 
-import Cipher.AES
-import Cipher.RepeatKey
+import Crypto.AES
+import Crypto.RepeatKey
 import Util
 
 minLength :: (Foldable a, Functor a) => a ByteString -> Int

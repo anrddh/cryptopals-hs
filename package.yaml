@@ -37,7 +37,6 @@ dependencies:
 - bits
 - vector
 - time
-- mtl
 
 library:
   source-dirs:

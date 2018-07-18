@@ -10,7 +10,7 @@ import Data.Text
 import Data.Text.IO
 
 import Util
-import Cipher.SingleXor
+import Crypto.SingleXor
 
 runS1C3 :: IO ()
 runS1C3 = do putStr "Enter hex string: "

@@ -5,7 +5,7 @@ This is an implementation of MT19937. See
 https://en.wikipedia.org/wiki/Mersenne_Twister for details.
 -}
 
-module Cipher.RNG where
+module Crypto.RNG where
 
 import Data.Bifunctor
 import Data.Bits
@@ -15,7 +15,6 @@ import Data.ByteString.Conversion
 import Control.Lens
 import Data.Maybe
 import Control.Monad
-import qualified Control.Monad.State.Lazy as C
 import Data.Word
 
 import Util hiding (d)
