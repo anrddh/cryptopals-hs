@@ -41,7 +41,7 @@ eCBC key iv pt = cipherOut `B.append` restBlocks
         restBlocks = eCBC key cipherOut (B.drop 16 pt)
 
 -- Only works correctly if len IV = 16 bytes (128 bits)
-dCBC :: Key -> IV -> CipherText -> ByteString
+dCBC :: Key -> IV -> CipherText -> PlainText
 dCBC _ _ "" = ""
 dCBC key iv ct
   | 16 <= B.length ct = plainOut `B.append` nextBlock
