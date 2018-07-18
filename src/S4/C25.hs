@@ -21,7 +21,6 @@ edit :: Nonce -> Key -> Int -> CipherText -> Word8 -> CipherText
 edit n k pos ct b = B.take blockStart ct `B.append`
                     encrypted `B.append`
                     B.drop (blockStart + 16) ct
-  -- eCTR k n 0 edited
   where blockNum       = pos `div` 16
         blockStart     = blockNum * 16
         decryptedBlock = ctrBlock k n blockNum (B.drop blockStart ct)

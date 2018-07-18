@@ -1,6 +1,6 @@
 module Lib
-    ( run
-    ) where
+  (run)
+where
 
 import Text.Read
 import System.IO (hFlush, stdout)
@@ -27,6 +27,7 @@ import S3.C22
 import S3.C23
 import S3.C24
 import S4.C25
+import S4.C26
 
 run :: IO ()
 run = putStr "Enter challenge number: "
@@ -55,4 +56,5 @@ run = putStr "Enter challenge number: "
                      Just 23 -> runS3C23
                      Just 24 -> runS3C24
                      Just 25 -> runS4C25
+                     Just 26 -> runS4C26
                      _       -> putStrLn "Bad input." *> run
