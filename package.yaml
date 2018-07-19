@@ -36,6 +36,7 @@ dependencies:
 - lens
 - bits
 - vector
+- cereal
 - time
 
 library:
