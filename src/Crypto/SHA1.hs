@@ -34,6 +34,9 @@ padding count = 0x80 `B.cons` (B.replicate padLen 0) `B.append` lenBS
 
         lenBS    = BL.toStrict . toLazyByteString . word64BE $ toWord64 (8 * count)
 
+padLen :: Int -> Int
+padLen = B.length . padding
+
 word32ToBS :: Word32 -> ByteString
 word32ToBS = BL.toStrict . toLazyByteString . word32BE
 
@@ -111,3 +114,6 @@ sha1 :: ByteString -> Base16
 sha1 = encode . D . stateToHash . sha1''
 
 {- End SHA1 Implementation -}
+
+keyedSHA :: Key -> ByteString -> SHA1State
+keyedSHA k m = sha1'' $ k `B.append` m
